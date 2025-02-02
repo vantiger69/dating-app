@@ -1,0 +1,106 @@
+/* ProfileEdit.css */
+
+/* Container for the profile edit page */
+.profile-edit-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Heading styles */
+  .profile-edit-container h1 {
+    text-align: center;
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Form styling */
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  /* Label styling */
+  form label {
+    font-size: 1.1rem;
+    color: #555;
+    font-weight: 500;
+  }
+  
+  /* Input field styling */
+  form input,
+  form textarea {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Input field focus state */
+  form input:focus,
+  form textarea:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+  }
+  
+  /* Textarea styling */
+  form textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+  
+  /* Button styling */
+  button {
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+  }
+  
+  /* Button hover effect */
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  /* Cancel button styling */
+  button[type="button"] {
+    background-color: #f44336;
+    margin-top: 10px;
+  }
+  
+  /* Cancel button hover effect */
+  button[type="button"]:hover {
+    background-color: #e53935;
+  }
+  
+  /* Responsive design for smaller screens */
+  @media (max-width: 600px) {
+    .profile-edit-container {
+      padding: 15px;
+    }
+  
+    form {
+      gap: 10px;
+    }
+  
+    form input,
+    form textarea,
+    button {
+      font-size: 0.9rem;
+    }
+  }
+  
