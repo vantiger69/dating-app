@@ -70,15 +70,45 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Endpoint to get users (example)
-users = [
-    {"id": 1, "name": "Alice", "age": 25, "bio": "Loves music."},
-    {"id": 2, "name": "Bob", "age": 30, "bio": "Avid traveler."},
-    {"id": 3, "name": "Charlie", "age": 22, "bio": "Food enthusiast."}
-]
+# Fetch all users
 @app.route('/api/users', methods=['GET'])
 def get_users():
-    return jsonify(users)
+    try:
+        users = User.query.all()
+        users_data = []
+        for user in users:
+            user_data = {
+                'id': user.id,
+                'name': user.name,
+                'age': user.age,
+                'bio': user.bio,
+                'photo': user.photo
+            }
+            users_data.append(user_data)
+        return jsonify(users_data), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Fetch a specific user by ID
+@app.route('/api/users/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    try:
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+        user_data = {
+            'id': user.id,
+            'name': user.name,
+            'age': user.age,
+            'bio': user.bio,
+            'photo': user.photo
+        }
+        return jsonify(user_data), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+
 
 # Signup Route
 @app.route('/api/signup', methods=['POST'])
@@ -148,32 +178,52 @@ def login():
     except SQLAlchemyError as e:
         return jsonify({'error': 'Database error', 'details': str(e)}), 500
 
-# Endpoint to update user profile with profile image
-@app.route('/api/users/<int:user_id>/upload_photo', methods=['POST'])
-def upload_profile_photo(user_id):
-    if 'photo' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
 
-    file = request.files['photo']
+# Endpoint to update user profile details
+@app.route('/api/users/<int:user_id>', methods=['PUT'])
+def update_user_profile(user_id):
+    data = request.form  # Get form data, including photo if uploaded
 
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
 
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(filepath)
+    # Update name, age, and bio from form data
+    user.name = data.get('name', user.name)
+    user.age = data.get('age', user.age)
+    user.bio = data.get('bio', user.bio)
 
-        user = User.query.get(user_id)
-        if not user:
-            return jsonify({'error': 'User not found'}), 404
+    # Handle photo if present
+    if 'photo' in request.files:
+        file = request.files['photo']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
 
-        user.photo = filename
+            # Delete old photo if exists
+            if user.photo:
+                os.remove(os.path.join(app.config['UPLOAD_FOLDER'], user.photo))
+            user.photo = filename
+
+    try:
         db.session.commit()
+        return jsonify({
+            'message': 'Profile updated successfully',
+            'user': {
+                'id': user.id,
+                'name': user.name,
+                'age': user.age,
+                'bio': user.bio,
+                'photo': user.photo
+            }
+        }), 200
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({'error': 'Database error', 'details': str(e)}), 500
 
-        return jsonify({'message': 'Profile photo uploaded successfully', 'photo_url': f'/api/users/{user_id}/photo'}), 200
 
-    return jsonify({'error': 'Invalid file type'}), 400
+
 
 # Endpoint to retrieve profile image
 @app.route('/api/users/<int:user_id>/photo', methods=['GET'])
@@ -182,7 +232,7 @@ def get_profile_photo(user_id):
     if not user or not user.photo:
         return jsonify({'error': 'No photo available for this user'}), 404
 
-    return send_file(os.path.join(app.config['UPLOAD_FOLDER'], user.photo))
+    return send_file(os.path.join)
 
 # Endpoint to delete profile image
 @app.route('/api/users/<int:user_id>/delete_photo', methods=['DELETE'])
@@ -198,6 +248,7 @@ def delete_profile_photo(user_id):
         return jsonify({'message': 'Profile photo deleted successfully'}), 200
     except OSError as e:
         return jsonify({'error': str(e)}), 500
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
