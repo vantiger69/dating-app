@@ -8,16 +8,19 @@ import ProfileDisplay from './components/profileDisplay';
 
 const App = () => {
   const [users, setUsers] = useState(() => {
-    // Load users from localStorage if available
     return JSON.parse(localStorage.getItem('users')) || [];
   });
 
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return Boolean(localStorage.getItem('currentUser'));
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Whenever the authentication state or users change, update localStorage
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  useEffect(() => {
     if (isAuthenticated) {
       localStorage.setItem('currentUser', JSON.stringify(users[users.length - 1]));
     } else {
@@ -36,13 +39,18 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        {/* Redirect to Home if authenticated, otherwise show SignUp */}
-        <Route path="/" element={isAuthenticated ? <Navigate to="/home" /> : <SignUp addUser={addUser} />} />
+        {/* Root route to redirect based on authentication */}
+        <Route path="/" element={isAuthenticated ? <Navigate to="/home" /> : <Navigate to="/signup" />} />
+
+        {/* Explicit signup route */}
+        <Route path="/signup" element={<SignUp addUser={addUser} />} />
+
+        {/* Other routes */}
         <Route path="/home" element={<Home users={users} />} />
         <Route path="/profile/:userId" element={<ProfileDisplay />} />
         <Route path="/login" element={<Login users={users} />} />
         <Route path="/profile/edit/:userId" element={<ProfileEdit />} />
-        </Routes>
+      </Routes>
     </Router>
   );
 };

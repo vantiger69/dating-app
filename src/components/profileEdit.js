@@ -1,36 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import './profileEdit.css';
 
 const ProfileEdit = () => {
-  const { userId } = useParams();  // Get user ID from URL
+  const { userId } = useParams();  
   const navigate = useNavigate();
+  const loggedInUserId = localStorage.getItem('userId');  
 
   const [userData, setUserData] = useState({
     name: '',
     age: '',
-    bio: '',
-    photo: '',
+    bio: ''
   });
-  const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
+    console.log("Logged In User ID (from localStorage):", loggedInUserId);
+    console.log("Profile User ID (from URL):", userId);
+  
+    // Fetch user data and handle redirection only if necessary
     const fetchUserData = async () => {
       try {
         const response = await fetch(`http://127.0.0.1:5000/api/users/${userId}`);
         if (response.ok) {
           const data = await response.json();
-          setUserData(data); // Populate user data into form
+          setUserData(data);
+  
+          if (parseInt(userId) !== parseInt(data.id)) {
+            console.log("Redirecting due to ID mismatch...");
+            navigate('/login');
+          }
         } else {
           console.error("Failed to fetch user data");
+          navigate("/login");
         }
       } catch (error) {
-        console.error("Fetch error: ", error);
+        console.error("Error fetching user data: ", error);
+        navigate("/login");
       }
     };
+  
+    if (userId) {
+      fetchUserData();
+    }
+  }, [userId, navigate]);
+   
+         
 
-    fetchUserData();
-  }, [userId]);
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,50 +55,25 @@ const ProfileEdit = () => {
     }));
   };
 
-  const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const formData = new FormData();
-    formData.append('name', userData.name);
-    formData.append('age', userData.age);
-    formData.append('bio', userData.bio);
-    if (selectedFile) {
-      formData.append('photo', selectedFile);
-    }
-
     try {
       const response = await fetch(`http://127.0.0.1:5000/api/users/${userId}`, {
         method: 'PUT',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
       });
 
       if (response.ok) {
-        navigate(`/profile/${userId}`);  // Redirect to the user's profile page after saving changes
+        console.log('User data updated successfully');
+        navigate(`/profile/${userId}`); // Redirect to profile display
       } else {
-        console.error("Failed to update user data");
+        console.error('Failed to update user data');
       }
     } catch (error) {
-      console.error("Update error: ", error);
-    }
-  };
-
-  const handleDeletePhoto = async () => {
-    try {
-      const response = await fetch(`http://127.0.0.1:5000/api/users/${userId}/photo`, {
-        method: 'DELETE',
-      });
-      if (response.ok) {
-        setUserData((prevData) => ({ ...prevData, photo: '' }));
-        alert("Profile photo deleted successfully.");
-      } else {
-        alert("Failed to delete profile photo.");
-      }
-    } catch (error) {
-      console.error("Delete error: ", error);
+      console.error('Error updating user data: ', error);
     }
   };
 
@@ -112,18 +102,6 @@ const ProfileEdit = () => {
           name="bio"
           value={userData.bio}
           onChange={handleChange}
-        />
-
-        <label>Profile Photo:</label>
-        {userData.photo && (
-          <div>
-            <img src={userData.photo} alt="Profile" className="profile-photo-preview" />
-            <button type="button" onClick={handleDeletePhoto}>Delete Photo</button>
-          </div>
-        )}
-        <input
-          type="file"
-          onChange={handleFileChange}
         />
 
         <button type="submit">Save Changes</button>

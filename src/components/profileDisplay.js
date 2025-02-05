@@ -1,39 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import './profileDisplay.css';
+import { useParams } from 'react-router-dom';
 
 const ProfileDisplay = () => {
-  const { userId } = useParams();  // Get user ID from URL
-  const navigate = useNavigate();
-  
+  const { userId } = useParams();  
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
+    console.log("User ID from URL:", userId);
+
     const fetchUserData = async () => {
-      const response = await fetch(`http://127.0.0.1:5000/api/users/${userId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setUserData(data); // Populate user data
-      } else {
-        console.error("Failed to fetch user data");
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/api/users/${userId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setUserData(data); // Set user data
+        } else {
+          console.error("Failed to fetch user data");
+        }
+      } catch (error) {
+        console.error("Error fetching user data: ", error);
       }
     };
 
-    fetchUserData();
-  }, [userId]);
+    if (userId) {
+      fetchUserData();
+    } else {
+      console.error("No userId found in URL.");
+    }
+  },[userId]);
 
   if (!userData) {
-    return <p>Loading user data...</p>;
+    return <div>Loading...</div>;
   }
 
   return (
-    <div className="profile-container">
+    <div className="profile-display-container">
       <h1>{userData.name}'s Profile</h1>
-      <img src={userData.photo || 'default-photo.jpg'} alt={userData.name} />
       <p>Age: {userData.age}</p>
       <p>Bio: {userData.bio}</p>
-      <button onClick={() => navigate(`/profile/edit/${userId}`)}>Edit Profile</button>
-      <button onClick={() => navigate('/home')}>Back to Home</button>
     </div>
   );
 };
