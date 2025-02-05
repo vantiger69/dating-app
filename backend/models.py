@@ -11,7 +11,7 @@ class User(db.Model):
     age = db.Column(db.Integer, nullable=False)
     bio = db.Column(db.Text, nullable=False)
     password = db.Column(db.String(255), nullable=False)
-    photo = db.Column(db.String(200), nullable=True)
+
 
 
     

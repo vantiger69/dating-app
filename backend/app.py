@@ -5,7 +5,6 @@ from flask_bcrypt import Bcrypt
 from dotenv import load_dotenv
 import os
 from sqlalchemy.exc import SQLAlchemyError
-from werkzeug.utils import secure_filename
 from io import BytesIO
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
@@ -16,6 +15,10 @@ load_dotenv()
 
 # Initialize the Flask app
 app = Flask(__name__)
+
+@app.route('/')
+def router():
+    return jsonify({"message":"Welcome to the backend"})
 
 # Load configuration from config.py
 app.config.from_object('config.Config')
@@ -57,18 +60,6 @@ if app.config['ENV'] == 'development':
         except SQLAlchemyError as e:
             print("Error creating database tables:", e)
 
-# Directory to store profile images
-UPLOAD_FOLDER = './uploads/profile_images'
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
-
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-# Allowable extensions
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Fetch all users
 @app.route('/api/users', methods=['GET'])
@@ -81,8 +72,7 @@ def get_users():
                 'id': user.id,
                 'name': user.name,
                 'age': user.age,
-                'bio': user.bio,
-                'photo': user.photo
+                'bio': user.bio
             }
             users_data.append(user_data)
         return jsonify(users_data), 200
@@ -100,12 +90,12 @@ def get_user(user_id):
             'id': user.id,
             'name': user.name,
             'age': user.age,
-            'bio': user.bio,
-            'photo': user.photo
+            'bio': user.bio
         }
         return jsonify(user_data), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 
 
@@ -177,78 +167,23 @@ def login():
 
     except SQLAlchemyError as e:
         return jsonify({'error': 'Database error', 'details': str(e)}), 500
-
-
-# Endpoint to update user profile details
-@app.route('/api/users/<int:user_id>', methods=['PUT'])
-def update_user_profile(user_id):
-    data = request.form  # Get form data, including photo if uploaded
-
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({'error': 'User not found'}), 404
-
-    # Update name, age, and bio from form data
-    user.name = data.get('name', user.name)
-    user.age = data.get('age', user.age)
-    user.bio = data.get('bio', user.bio)
-
-    # Handle photo if present
-    if 'photo' in request.files:
-        file = request.files['photo']
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(filepath)
-
-            # Delete old photo if exists
-            if user.photo:
-                os.remove(os.path.join(app.config['UPLOAD_FOLDER'], user.photo))
-            user.photo = filename
-
-    try:
-        db.session.commit()
-        return jsonify({
-            'message': 'Profile updated successfully',
-            'user': {
-                'id': user.id,
-                'name': user.name,
-                'age': user.age,
-                'bio': user.bio,
-                'photo': user.photo
-            }
-        }), 200
-    except SQLAlchemyError as e:
-        db.session.rollback()
-        return jsonify({'error': 'Database error', 'details': str(e)}), 500
-
-
-
-
-# Endpoint to retrieve profile image
-@app.route('/api/users/<int:user_id>/photo', methods=['GET'])
-def get_profile_photo(user_id):
-    user = User.query.get(user_id)
-    if not user or not user.photo:
-        return jsonify({'error': 'No photo available for this user'}), 404
-
-    return send_file(os.path.join)
-
-# Endpoint to delete profile image
-@app.route('/api/users/<int:user_id>/delete_photo', methods=['DELETE'])
-def delete_profile_photo(user_id):
-    user = User.query.get(user_id)
-    if not user or not user.photo:
-        return jsonify({'error': 'No photo to delete'}), 404
-
-    try:
-        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], user.photo))
-        user.photo = None
-        db.session.commit()
-        return jsonify({'message': 'Profile photo deleted successfully'}), 200
-    except OSError as e:
-        return jsonify({'error': str(e)}), 500
     
+
+@app.route('/api/users/<int:user_id>', methods=['PUT'])
+def update_user(user_id):
+    data = request.get_json()
+    # Logic to update the user in the database using `user_id`
+    # For example, update the user in a database and return a response
+    updated_user = {
+        'id': user_id,
+        'name': data.get('name'),
+        'age': data.get('age'),
+        'bio': data.get('bio')
+    }
+    return jsonify(updated_user), 200
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
