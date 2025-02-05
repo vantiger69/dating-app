@@ -30,7 +30,7 @@ CORS(app)
 migrate = Migrate(app, db)
 
 # Configure SQLite database URI
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/van/Documents/my-app/backend/database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Load the secret key for the app
@@ -44,7 +44,7 @@ else:
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'default_secret_key')
 print("JWT_SECRET_KEY:", app.config['JWT_SECRET_KEY'])
 
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(seconds=30)
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(minutes=30)
 jwt = JWTManager(app)
 
 # Initialize extensions
