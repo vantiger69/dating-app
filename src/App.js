@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, BrowserRouter } from 'react-router-dom';
 import Home from './components/Home';
 import SignUp from './components/SignUp';
 import Login from './components/Login';
@@ -37,7 +37,7 @@ const App = () => {
   };
 
   return (
-    <Router>
+    <BrowserRouter basename="/my-app">
       <Routes>
         {/* Root route to redirect based on authentication */}
         <Route path="/" element={isAuthenticated ? <Navigate to="/home" /> : <Navigate to="/signup" />} />
@@ -51,7 +51,7 @@ const App = () => {
         <Route path="/login" element={<Login users={users} />} />
         <Route path="/profile/edit/:userId" element={<ProfileEdit />} />
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
 };
 
