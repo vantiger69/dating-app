@@ -90,7 +90,7 @@ const Home = () => {
       )}
 
       {/* Display Profile */}
-      {/*<ProfileDisplay users={users.length > 0 ? users : []} />*/}
+      <ProfileDisplay users={users.length > 0 ? users : []} />
       
 
     </div>
