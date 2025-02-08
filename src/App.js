@@ -6,7 +6,7 @@ import Login from './components/Login';
 import ProfileEdit from './components/profileEdit';
 import ProfileDisplay from './components/profileDisplay';
 
-const App = () => {
+ const App = () => {
   const [users, setUsers] = useState(() => {
     return JSON.parse(localStorage.getItem('users')) || [];
   });
@@ -14,18 +14,22 @@ const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
+    if (typeof window !== 'undefined'){
     const currentUser = localStorage.getItem('currentUser');
     if (currentUser) {
       setIsAuthenticated(true);
     }
+  }
   }, []);
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
     if (isAuthenticated) {
       localStorage.setItem('currentUser', JSON.stringify(users[users.length - 1]));
     } else {
       localStorage.removeItem('currentUser');
     }
+  }
   }, [isAuthenticated, users]);
 
   const addUser = (user) => {
@@ -33,7 +37,10 @@ const App = () => {
       const updatedUsers = [...prevUsers, { ...user, id: prevUsers.length + 1 }];
       return updatedUsers;
     });
-    setIsAuthenticated(true); // Mark the user as authenticated
+    setIsAuthenticated(true); 
+    if (typeof window !== 'undefined'){
+      localStorage.setItem('users',JSON.stringify([...users,user]));
+    }
   };
 
   return (
