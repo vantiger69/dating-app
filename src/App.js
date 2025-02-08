@@ -14,22 +14,18 @@ import ProfileDisplay from './components/profileDisplay';
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined'){
     const currentUser = localStorage.getItem('currentUser');
     if (currentUser) {
       setIsAuthenticated(true);
     }
-  }
   }, []);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
     if (isAuthenticated) {
       localStorage.setItem('currentUser', JSON.stringify(users[users.length - 1]));
     } else {
       localStorage.removeItem('currentUser');
     }
-  }
   }, [isAuthenticated, users]);
 
   const addUser = (user) => {
@@ -38,9 +34,7 @@ import ProfileDisplay from './components/profileDisplay';
       return updatedUsers;
     });
     setIsAuthenticated(true); 
-    if (typeof window !== 'undefined'){
-      localStorage.setItem('users',JSON.stringify([...users,user]));
-    }
+    
   };
 
   return (

@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/my-app/static/css/main.59480c27.css",
-    "main.js": "/my-app/static/js/main.ab26028e.js",
-    "static/js/488.9c92ff38.chunk.js": "/my-app/static/js/488.9c92ff38.chunk.js",
-    "index.html": "/my-app/index.html",
-    "main.59480c27.css.map": "/my-app/static/css/main.59480c27.css.map",
-    "main.ab26028e.js.map": "/my-app/static/js/main.ab26028e.js.map",
-    "488.9c92ff38.chunk.js.map": "/my-app/static/js/488.9c92ff38.chunk.js.map"
+    "main.css": "/dating-app/static/css/main.59480c27.css",
+    "main.js": "/dating-app/static/js/main.e17705dc.js",
+    "static/js/488.d0940844.chunk.js": "/dating-app/static/js/488.d0940844.chunk.js",
+    "index.html": "/dating-app/index.html",
+    "main.59480c27.css.map": "/dating-app/static/css/main.59480c27.css.map",
+    "main.e17705dc.js.map": "/dating-app/static/js/main.e17705dc.js.map",
+    "488.d0940844.chunk.js.map": "/dating-app/static/js/488.d0940844.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.59480c27.css",
-    "static/js/main.ab26028e.js"
+    "static/js/main.e17705dc.js"
   ]
 }
