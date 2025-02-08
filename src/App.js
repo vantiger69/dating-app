@@ -37,7 +37,7 @@ const App = () => {
   };
 
   return (
-    <BrowserRouter basename="/my-app">
+    <BrowserRouter basename={process.env.PUBLIC_URL || '/'}>
       <Routes>
         {/* Root route to redirect based on authentication */}
         <Route path="/" element={isAuthenticated ? <Navigate to="/home" /> : <Navigate to="/signup" />} />
