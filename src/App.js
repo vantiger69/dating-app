@@ -44,7 +44,7 @@ import ProfileDisplay from './components/profileDisplay';
   };
 
   return (
-    <BrowserRouter basename={process.env.PUBLIC_URL || '/'}>
+    <BrowserRouter basename="/dating-app">
       <Routes>
         {/* Root route to redirect based on authentication */}
         <Route path="/" element={isAuthenticated ? <Navigate to="/home" /> : <Navigate to="/signup" />} />
