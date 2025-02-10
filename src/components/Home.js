@@ -30,7 +30,7 @@ const Home = () => {
         setError(null);
 
         // Assume the logged-in user has an ID of 1 for demonstration
-        const loggedInResponse = await fetch('http://127.0.0.1:5000/api/users/1'); // Replace '1' with your actual logged-in user ID
+        const loggedInResponse = await fetch('http://127.0.0.1:5000/api/users/1');
         const loggedInData = await loggedInResponse.json();
         setLoggedInUser(loggedInData); // Store logged-in user data
 

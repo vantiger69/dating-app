@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate, BrowserRouter } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Home from './components/Home';
 import SignUp from './components/SignUp';
 import Login from './components/Login';
 import ProfileEdit from './components/profileEdit';
 import ProfileDisplay from './components/profileDisplay';
+import API_URL from './api';
 
  const App = () => {
   const [users, setUsers] = useState(() => {
@@ -38,7 +39,7 @@ import ProfileDisplay from './components/profileDisplay';
   };
 
   return (
-    <BrowserRouter basename="/dating-app">
+    <Router>
       <Routes>
         {/* Root route to redirect based on authentication */}
         <Route path="/" element={isAuthenticated ? <Navigate to="/home" /> : <Navigate to="/signup" />} />
@@ -52,7 +53,7 @@ import ProfileDisplay from './components/profileDisplay';
         <Route path="/login" element={<Login users={users} />} />
         <Route path="/profile/edit/:userId" element={<ProfileEdit />} />
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 };
 

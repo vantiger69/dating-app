@@ -1,7 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 
 
-
 db = SQLAlchemy()
 
 class User(db.Model):
@@ -12,6 +11,5 @@ class User(db.Model):
     bio = db.Column(db.Text, nullable=False)
     password = db.Column(db.String(255), nullable=False)
 
-
-
     
+

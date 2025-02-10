@@ -30,8 +30,8 @@ CORS(app)
 migrate = Migrate(app, db)
 
 # Configure SQLite database URI
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+##app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+##app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Load the secret key for the app
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
